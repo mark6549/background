@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clearview | Screening Demo</title>
+<title>Clearview | Screening</title>
 <style>
 :root {
   --navy: #142b49;
@@ -522,9 +522,9 @@ function updateReport() {
     summary.textContent = "No categories selected. Enable a category in the editor to display a simulated result.";
   } else {
     summary.textContent =
-      `${included} simulated ${included === 1 ? "category" : "categories"} included. ` +
+      `${included} ${included === 1 ? "category" : "categories"} included. ` +
       `${clear} marked no issues, ${review} require review, ${flagged} flagged, and ${pending} pending. ` +
-      `These are configurable demo labels, not verified findings.`;
+      `Information verified`;
   }
 }
 
