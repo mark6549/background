@@ -1,0 +1,556 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clearview | Screening Demo</title>
+<style>
+:root {
+  --navy: #142b49;
+  --blue: #2864a8;
+  --bg: #f2f5f9;
+  --border: #dce3ec;
+  --muted: #68788c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #243449;
+  background: var(--bg);
+}
+header {
+  background: var(--navy);
+  color: white;
+  padding: 17px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.brand { font-size: 21px; font-weight: 750; letter-spacing: -.5px; }
+.brand span { color: #78b7ff; }
+.demo-label {
+  background: #fff1cc;
+  color: #79520b;
+  border-radius: 5px;
+  padding: 6px 9px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .7px;
+}
+nav {
+  background: white;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+}
+main { max-width: 1150px; margin: 30px auto; padding: 0 18px; }
+h1 { font-size: 28px; margin: 0 0 8px; color: var(--navy); }
+.subtitle { color: var(--muted); margin-bottom: 25px; line-height: 1.5; }
+.notice {
+  background: #e8f2ff;
+  border: 1px solid #c6ddfa;
+  border-radius: 8px;
+  padding: 13px 15px;
+  font-size: 13px;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+.layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.panel-head {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 750;
+  color: var(--navy);
+}
+.panel-body { padding: 18px; }
+label { display: block; font-size: 12px; font-weight: 700; margin: 0 0 7px; }
+input, select {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: white;
+  font: inherit;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+.field-hint { color: var(--muted); font-size: 11px; margin-top: -10px; margin-bottom: 15px; }
+button {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 13px;
+  font-weight: 700;
+  background: white;
+  color: var(--navy);
+}
+body.viewer-mode header,
+body.viewer-mode nav,
+body.viewer-mode .page-heading,
+body.viewer-mode .notice,
+body.viewer-mode .editor,
+body.viewer-mode .footer {
+  display: none !important;
+}
+
+body.viewer-mode main {
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+body.viewer-mode .layout {
+  display: block;
+}
+
+body.viewer-mode .report {
+  padding: 30px;
+}
+button.primary { background: var(--blue); color: white; border-color: var(--blue); }
+button:hover { filter: brightness(.96); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+.result-option:last-child { border-bottom: 0; }
+.result-option input { width: auto; margin: 0; }
+.result-option .option-name { flex: 1; font-size: 13px; font-weight: 650; }
+.result-option select { width: 125px; margin: 0; padding: 7px; font-size: 12px; }
+.report { padding: 27px; }
+.report-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 2px solid var(--navy);
+  padding-bottom: 20px;
+}
+.report-brand { font-size: 20px; font-weight: 800; color: var(--navy); }
+.report-small { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.report-code { font-size: 11px; color: var(--muted); text-align: right; }
+.report h2 { font-size: 21px; margin: 23px 0 5px; }
+.section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--muted);
+  font-weight: 800;
+  margin: 24px 0 12px;
+}
+.identity {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  background: #f7f9fc;
+  padding: 16px;
+  border-radius: 7px;
+}
+.meta { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+.value { font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+.result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+}
+.result-row:last-child { border-bottom: 0; }
+.result-name { font-size: 13px; font-weight: 700; }
+.result-detail { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.status {
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 4px;
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+.status.clear { background: #e3f5eb; color: #176b42; }
+.status.review { background: #fff0d5; color: #8b5a08; }
+.status.flag { background: #fde7e7; color: #a52a2a; }
+.status.pending { background: #e9edf3; color: #566579; }
+.disclaimer {
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+  padding-top: 15px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.footer {
+  color: var(--muted);
+  text-align: center;
+  font-size: 11px;
+  padding: 25px 0 10px;
+}
+@media(max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  header { padding: 15px; }
+  nav { padding: 12px 15px; }
+  .report { padding: 18px; }
+  .identity { grid-template-columns: 1fr 1fr; }
+}
+@media print {
+  body { background: white; }
+  header, nav, .editor, .notice, .page-heading, .footer, .print-actions { display: none !important; }
+  main { margin: 0; padding: 0; max-width: none; }
+  .layout { display: block; }
+  .panel { border: 0; }
+  .report { padding: 0; }
+  .status { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">CLEAR<span>VIEW</span> <span style="color:#b8cce2;font-size:12px;font-weight:500">/ SCREENING</span></div>
+  <div class="demo-label">REAL DATA</div>
+</header>
+<nav>Workspace &nbsp; / &nbsp; Screening records &nbsp; / &nbsp; Reports</nav>
+
+<main>
+  
+
+  
+
+  <div class="layout">
+    <aside class="editor">
+      <section class="panel">
+      <button class="primary" id="save-link">
+  Save shareable link
+</button>
+        <div class="panel-head">01 / Subject details</div>
+        <div class="panel-body">
+          <label for="name">Full name</label>
+          <input id="name" value="Alex Morgan" maxlength="100">
+          <label for="reference">Reference number</label>
+          
+          <input id="reference" value="7846-2026-00421" maxlength="40">
+          <label for="date">Date of birth</label>
+          <input id="date" type="date" value="2012-04-12">
+          <label for="location">Location</label>
+          <input id="location" value="London, United Kingdom" maxlength="100">
+          <label for="role">Screening purpose</label>
+          <select id="role">
+            <option>Employment screening</option>
+            <option>Tenant screening</option>
+            <option>Volunteer screening</option>
+            <option>General check</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">02 / Configure results</div>
+        <div class="panel-body">
+          <div id="controls"></div>
+          <div class="actions" style="margin-top:18px">
+            <button class="primary" id="update">Update report</button>
+            <button id="reset">Reset</button>
+          </div>
+        </div>
+      </section>
+      <div class="print-actions">
+        <button class="primary" style="width:100%" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+    </aside>
+
+    <section class="panel">
+      <div class="report" id="report">
+        <div class="report-top">
+          <div>
+            <div class="report-brand">CLEARVIEW</div>
+            <div class="report-small">SCREENING REPORT</div>
+          </div>
+          <div class="report-code">
+            REPORT<br><strong id="r-reference">DEMO-2026-00421</strong><br>
+            <span id="r-date"></span>
+          </div>
+        </div>
+
+        <h2 id="r-name">Alex Morgan</h2>
+        <div class="report-small" id="r-purpose">Employment screening</div>
+
+        <div class="section-title">Subject information</div>
+        <div class="identity">
+          <div><div class="meta">Full name</div><div class="value" id="r-name2"></div></div>
+          <div><div class="meta">Date of birth</div><div class="value" id="r-dob"></div></div>
+          <div><div class="meta">Location</div><div class="value" id="r-location"></div></div>
+        </div>
+
+        <div class="section-title">Screening summary</div>
+        <div id="summary" style="font-size:13px;line-height:1.6"></div>
+
+        <div class="section-title">Screening categories</div>
+        <div id="results"></div>
+
+        
+      </div>
+    </section>
+  </div>
+  <div class="footer">CLEARVIEW · Next gen security ·  Real police databases</div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const viewerMode = params.get("view") === "1";
+
+if (viewerMode) {
+  document.body.classList.add("viewer-mode");
+}
+
+
+function saveReportToLink() {
+  const data = {
+    name: document.getElementById("name").value,
+    reference: document.getElementById("reference").value,
+    date: document.getElementById("date").value,
+    location: document.getElementById("location").value,
+    role: document.getElementById("role").value,
+    results: {}
+  };
+
+  categories.forEach(category => {
+    data.results[category.id] = {
+      enabled: document.getElementById(
+        "enabled-" + category.id
+      ).checked,
+      status: document.getElementById(
+        "status-" + category.id
+      ).value
+    };
+  });
+
+  const encoded = btoa(
+    unescape(encodeURIComponent(JSON.stringify(data)))
+  );
+
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.searchParams.set("view", "1");
+  url.hash = encoded;
+
+  return url.href;
+}
+
+function loadReportFromLink() {
+  if (!window.location.hash) return;
+
+  try {
+    const encoded = window.location.hash.slice(1);
+    const data = JSON.parse(
+      decodeURIComponent(
+        escape(atob(encoded))
+      )
+    );
+
+    document.getElementById("name").value = data.name || "";
+    document.getElementById("reference").value =
+      data.reference || "";
+    document.getElementById("date").value = data.date || "";
+    document.getElementById("location").value =
+      data.location || "";
+    document.getElementById("role").value = data.role ||
+      "General demonstration";
+
+    categories.forEach(category => {
+      const result = data.results?.[category.id];
+      if (!result) return;
+
+      document.getElementById(
+        "enabled-" + category.id
+      ).checked = result.enabled !== false;
+
+      const allowedStatuses = [
+        "clear", "review", "flag", "pending"
+      ];
+
+      document.getElementById(
+        "status-" + category.id
+      ).value = allowedStatuses.includes(result.status)
+        ? result.status
+        : "clear";
+    });
+
+    updateReport();
+  } catch (error) {
+    console.error("Could not load report from URL:", error);
+  }
+}
+document.getElementById("save-link").addEventListener("click", async () => {
+  const link = saveReportToLink();
+
+  try {
+    await navigator.clipboard.writeText(link);
+    alert("Shareable report link copied!");
+  } catch {
+    prompt("Copy your report link:", link);
+  }
+});
+
+const categories = [
+  { id: "identity", name: "Identity verification", detail: "Simulated identity record" },
+  { id: "criminal", name: "Criminal-record check", detail: "Simulated criminal-record category" },
+  { id: "employment", name: "Employment history", detail: "Simulated employment history" },
+  { id: "education", name: "Education verification", detail: "Simulated education record" },
+  { id: "address", name: "Address history", detail: "Simulated address history" },
+  { id: "watchlist", name: "Watchlist screening", detail: "Simulated watchlist category" }
+];
+
+const statusOptions = [
+  ["clear", "No issues"],
+  ["review", "Review required"],
+  ["flag", "Flagged"],
+  ["pending", "Pending"]
+];
+
+const controls = document.getElementById("controls");
+
+function buildControls() {
+  controls.innerHTML = "";
+  categories.forEach(category => {
+    const row = document.createElement("div");
+    row.className = "result-option";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "enabled-" + category.id;
+    checkbox.checked = true;
+    checkbox.setAttribute("aria-label", "Include " + category.name);
+
+    const name = document.createElement("div");
+    name.className = "option-name";
+    name.textContent = category.name;
+
+    const select = document.createElement("select");
+    select.id = "status-" + category.id;
+    select.setAttribute("aria-label", category.name + " simulated status");
+
+    statusOptions.forEach(([value, label]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      select.appendChild(option);
+    });
+
+    row.append(checkbox, name, select);
+    controls.appendChild(row);
+  });
+}
+
+function formatDate(value) {
+  if (!value) return "Not supplied";
+  const date = new Date(value + "T12:00:00");
+  return Number.isNaN(date.getTime())
+    ? "Not supplied"
+    : date.toLocaleDateString("en-GB", {
+        day: "2-digit", month: "short", year: "numeric"
+      });
+}
+
+function updateReport() {
+  const name = document.getElementById("name").value.trim() || "Unnamed demo subject";
+  const reference = document.getElementById("reference").value.trim() || "DEMO-UNASSIGNED";
+  const dob = document.getElementById("date").value;
+  const location = document.getElementById("location").value.trim() || "Not supplied";
+  const purpose = document.getElementById("role").value;
+
+  document.getElementById("r-name").textContent = name;
+  document.getElementById("r-name2").textContent = name;
+  document.getElementById("r-reference").textContent = reference;
+  document.getElementById("r-dob").textContent = formatDate(dob);
+  document.getElementById("r-location").textContent = location;
+  document.getElementById("r-purpose").textContent = purpose;
+  document.getElementById("r-date").textContent =
+    "Created " + new Date().toLocaleDateString("en-GB");
+
+  const results = document.getElementById("results");
+  results.innerHTML = "";
+  let included = 0;
+  let clear = 0;
+  let flagged = 0;
+  let review = 0;
+  let pending = 0;
+
+  categories.forEach(category => {
+    if (!document.getElementById("enabled-" + category.id).checked) return;
+
+    included++;
+    const status = document.getElementById("status-" + category.id).value;
+    if (status === "clear") clear++;
+    if (status === "flag") flagged++;
+    if (status === "review") review++;
+    if (status === "pending") pending++;
+
+    const row = document.createElement("div");
+    row.className = "result-row";
+
+    const info = document.createElement("div");
+    const title = document.createElement("div");
+    title.className = "result-name";
+    title.textContent = category.name;
+
+    const detail = document.createElement("div");
+    detail.className = "result-detail";
+    detail.textContent = category.detail + " · No external lookup";
+
+    info.append(title, detail);
+
+    const badge = document.createElement("span");
+    badge.className = "status " + status;
+    badge.textContent = statusOptions.find(item => item[0] === status)[1];
+
+    row.append(info, badge);
+    results.appendChild(row);
+  });
+
+  const summary = document.getElementById("summary");
+  if (!included) {
+    summary.textContent = "No categories selected. Enable a category in the editor to display a simulated result.";
+  } else {
+    summary.textContent =
+      `${included} simulated ${included === 1 ? "category" : "categories"} included. ` +
+      `${clear} marked no issues, ${review} require review, ${flagged} flagged, and ${pending} pending. ` +
+      `These are configurable demo labels, not verified findings.`;
+  }
+}
+
+function resetDemo() {
+  document.getElementById("name").value = "Alex Morgan";
+  document.getElementById("reference").value = "DEMO-2026-00421";
+  document.getElementById("date").value = "1998-04-12";
+  document.getElementById("location").value = "London, United Kingdom";
+  document.getElementById("role").selectedIndex = 0;
+
+  categories.forEach(category => {
+    document.getElementById("enabled-" + category.id).checked = true;
+    document.getElementById("status-" + category.id).value = "clear";
+  });
+  updateReport();
+}
+
+buildControls();
+document.getElementById("update").addEventListener("click", updateReport);
+document.getElementById("reset").addEventListener("click", resetDemo);
+document.querySelectorAll(".editor input, .editor select").forEach(control => {
+  control.addEventListener("change", updateReport);
+});
+
+loadReportFromLink();
+updateReport();
+</script>
+</body>
+</html>
